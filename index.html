@@ -1,0 +1,13 @@
+<script>
+var socket = new WebSocket("ws://localhost:9000");
+var numMessages=0;
+socket.onmessage=function(event){
+    console.log(event.data);
+    if(numMessages===0){
+        //socket.send("{\"address\": { \"streetAddress\": \"21 2nd Street\", \"city\": \"New York\" },\"phoneNumber\": [   {  \"location\": \"home\", \"code\": 44  }]}");
+        //socket.send("{\"Address\": { \"streetAddress\": \"21 2nd Street\", \"city\": \"New York\" },\"phoneNumber\": [   {  \"location\": \"home\", \"code\": 44  }]}");
+        socket.send("hello");
+    }
+    numMessages++;    
+}
+</script>
