@@ -98,7 +98,7 @@ public:
         
         //std::thread myThread(&somefunction, this, hdl, msg->get_payload());
     }
-	void run(uint16_t port, parser* parseFunction, std::string& on_open_message_) {
+	void run(uint16_t port, parser* parseFunction, std::string& on_open_message_) {//parseFunction must be a class that has a function "parse" which takes a string and a function to run when an error occurs
         textParser=parseFunction;
         on_open_message=on_open_message_;
 		m_server.listen(port);
