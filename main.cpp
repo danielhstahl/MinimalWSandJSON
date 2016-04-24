@@ -34,7 +34,6 @@ private:
 public:
     void parse(auto& json_, const auto& onError){
         if(json.Parse(json_.c_str()).HasParseError()){
-            
             onError("{\"Error\":\"String is not JSON\"}");
         }
         else{
@@ -69,13 +68,13 @@ using websocketpp::connection_hdl;
 using websocketpp::lib::placeholders::_1;
 using websocketpp::lib::placeholders::_2;
 using websocketpp::lib::bind;
-
 template<typename parser>
 class WS{
 private:
     server m_server;
     std::map<connection_hdl, int, std::owner_less<connection_hdl>> holdThreads;
     parser* textParser;
+    std::string on_open_message;
 public:
 	WS(){
 		m_server.init_asio();
@@ -86,7 +85,7 @@ public:
     }
     void on_open(connection_hdl hdl) {
         holdThreads[hdl]=0;//just an example.  Creates a new item for every connection.  Gets deleted on close
-        m_server.send(hdl,"message", websocketpp::frame::opcode::text);
+        m_server.send(hdl,on_open_message, websocketpp::frame::opcode::text);
 	}
 	void on_close(connection_hdl hdl) {
         holdThreads.erase(hdl); //remove connection from map
@@ -99,8 +98,9 @@ public:
         
         //std::thread myThread(&somefunction, this, hdl, msg->get_payload());
     }
-	void run(uint16_t port, parser* parseFunction) {
+	void run(uint16_t port, parser* parseFunction, std::string& on_open_message_) {
         textParser=parseFunction;
+        on_open_message=on_open_message_;
 		m_server.listen(port);
 		m_server.start_accept();
 		m_server.run();
@@ -114,5 +114,5 @@ int main(){
     WS<Parser> server;
     Parser jsonParser;
     jsonParser.parseSchema(schemaJson, [&](const std::string& error){std::cout<<error<<std::endl;});
-    server.run(9000, &jsonParser);//give port to the program
+    server.run(9000, &jsonParser, schemaJson);//give port to the program
 }
