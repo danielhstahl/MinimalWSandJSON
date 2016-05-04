@@ -1,13 +1,36 @@
-<script>
-var socket = new WebSocket("ws://localhost:9000");
-var numMessages=0;
-socket.onmessage=function(event){
-    console.log(event.data);
-    if(numMessages===0){
-        //socket.send("{\"address\": { \"streetAddress\": \"21 2nd Street\", \"city\": \"New York\" },\"phoneNumber\": [   {  \"location\": \"home\", \"code\": 44  }]}");
-        //socket.send("{\"Address\": { \"streetAddress\": \"21 2nd Street\", \"city\": \"New York\" },\"phoneNumber\": [   {  \"location\": \"home\", \"code\": 44  }]}");
-        socket.send("hello");
-    }
-    numMessages++;    
-}
-</script>
+<html>
+    <head>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        
+        <script src='math.min.js'></script>
+        <script src='jsoneditor.min.js'></script>
+        
+    </head>
+    <body>
+        <div id='editor_holder'></div>
+        <button id='submit'>Submit</button>
+    </body>
+
+    <script>
+        var element = document.getElementById('editor_holder');
+        var editor={};
+        var socket = new WebSocket("ws://localhost:9000");
+        var numMessages=0;
+        socket.onmessage=function(event){
+            
+            var schema=JSON.parse(event.data);
+            console.log(schema);
+            editor = new JSONEditor(element, {schema:schema, theme:"bootstrap3"});  
+           // $('#editor_holder').alpaca({schema:schema});
+        }
+        document.getElementById('submit').addEventListener('click',function() {
+        // Get the value from the editor
+            console.log(editor.getValue());
+            socket.send(JSON.stringify(editor.getValue()));
+        });
+    </script>
+</html>

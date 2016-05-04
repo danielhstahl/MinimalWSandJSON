@@ -1,1 +1,4 @@
 g++ main.cpp -std=c++14 -pthread  -I../rapidjson/include/rapidjson -I../websocketpp -I../asio/asio/include -o testWSandJSON
+
+
+cl /EHsc /O2 /openmp main.cpp /I..\rapidjson\include\rapidjson /I..\websocketpp /I..\asio
